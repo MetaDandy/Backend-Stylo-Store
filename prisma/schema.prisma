@@ -13,27 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model Product{
-  id Int @unique @default(autoincrement())
-  name String @unique
-  price Float @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  category Category @relation(fields: [categoryId],references: [id])
-  categoryId Int
-}
-
-model Category{
-  id Int @unique @default(autoincrement())
-  name String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  products Product[]
-}
-
 model Role{
-  id Int @unique @default(autoincrement())
+  id Int @id @default(autoincrement())
   name String @unique @db.VarChar(20)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -44,7 +25,7 @@ model Role{
 }
 
 model User{
-  id Int @unique @default(autoincrement())
+  id Int @id @default(autoincrement())
   name String @db.VarChar(50)
   email String @unique @db.VarChar(75)
   password String @db.VarChar(255)
@@ -53,12 +34,14 @@ model User{
   updatedAt DateTime @default(now())
   deletedAt DateTime?
   assignedRole AssignedRole[]
+  order Order[]
+  delivery Delivery[]
 
   @@index([email])
 }
 
 model AssignedRole{
-  id Int @unique @default(autoincrement())
+  id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   deletedAt DateTime?
@@ -66,4 +49,140 @@ model AssignedRole{
   roleId Int
   user User @relation(fields: [userId],references: [id])
   userId Int
+}
+
+model Branch{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(50)
+  direction String @db.VarChar(80)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  inventory Inventory[]
+}
+
+model Season{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(35)
+  description String @db.VarChar(75)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  product Product[]
+}
+
+model Category{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(35)
+  description String @db.VarChar(75)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  product Product[]
+}
+
+model Product{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(70)
+  price Float 
+  season Season @relation(fields: [seasonId],references: [id])
+  seasonId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  inventory Inventory[]
+  order Order[]
+}
+
+model Inventory{
+  id Int @id @default(autoincrement())
+  stock Int 
+  branch Branch @relation(fields: [branchId],references: [id])
+  branchId Int
+  product Product @relation(fields: [productId],references: [id])
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+}
+
+model OrderType{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(25)
+  description String @db.VarChar(75)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  orderStatus OrderStatus[]
+}
+
+model Order{
+  id Int @id @default(autoincrement())
+  name String @unique @db.VarChar(25)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  orderStatus OrderStatus[]
+  delivery Delivery[]
+  product Product @relation(fields: [productId],references: [id])
+  productId Int
+  bill Bill @relation(fields: [billId],references: [id])
+  billId Int
+  user User @relation(fields: [userId],references: [id])
+  userId Int
+}
+
+model OrderStatus{
+  id Int @id @default(autoincrement())
+  description String @db.VarChar(75)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  orderType OrderType @relation(fields: [orderTypeId],references: [id])
+  orderTypeId Int
+  oder Order @relation(fields: [orderId],references: [id])
+  orderId Int
+}
+
+model Delivery{
+  id Int @id @default(autoincrement())
+  direction String @db.VarChar(75)
+  cost Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  user User @relation(fields: [userId],references: [id])
+  userId Int
+  order Order @relation(fields: [orderId],references: [id])
+  orderId Int
+}
+
+model Currency{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  bill Bill[]
+}
+
+model Payment{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(25)
+  description String @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  bill Bill[]
+}
+
+model Bill{
+  id Int @id @default(autoincrement())
+  totalAmount Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  order Order[]
+  currency Currency @relation(fields: [currencyId],references: [id])
+  currencyId Int
+  payment Payment @relation(fields: [paymentId],references: [id])
+  paymentId Int
 }

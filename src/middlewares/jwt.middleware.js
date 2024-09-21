@@ -12,10 +12,11 @@ export const verifyToken = (req, res, next) => {
   token = token.split(" ")[1];
 
   try {
-    const { email } = jwt.verify(token, process.env.JWT_SECRET);
+    const { email, role } = jwt.verify(token, process.env.JWT_SECRET);
 
     console.log("verficando el email: ", email);
     req.email = email; //inyecta todo
+    req.role = role;
     next();
   } catch (error) {
     console.log(error);

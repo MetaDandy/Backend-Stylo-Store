@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const register = async (req, res) => {
   try {
     console.log(req.body);
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, roleId } = req.body;
 
     if (!name || !email || !password || !phone)
       return res.status(400).json({
@@ -35,10 +35,22 @@ const register = async (req, res) => {
       },
     });
 
+    const newRoleAssigment = await prisma.assignedRole.create({
+      data: {
+        role: { id: roleId },
+        user: { id: newUser.id },
+      },
+    });
+
+    const role = await prisma.role.findFirst({
+      where: { id: roleId },
+    });
+
     const token = jwt.sign(
       {
         email: newUser.email,
         name: newUser.name,
+        role,
       },
       process.env.JWT_SECRET,
       {
@@ -74,18 +86,28 @@ const login = async (req, res) => {
 
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        assignedRole: {
+          include: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) return res.status(404).json({ error: "user not found" });
 
     const isMatch = await bcryptjs.compare(password, user.password);
-
     if (!isMatch) return res.status(401).json({ error: "Invalid Credentials" });
+
+    const userRole =
+      user.assignedRole.length > 0 ? user.assignedRole[0].role.name : null;
 
     const token = jwt.sign(
       {
         email: user.email,
         name: user.name,
+        role: userRole,
       },
       process.env.JWT_SECRET,
       {
