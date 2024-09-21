@@ -107,7 +107,29 @@ const login = async (req, res) => {
   }
 };
 
+const profile = async (req, res) => {
+  try {
+    const email = req.email;
+    console.log("profile: ", email);
+    const user = await prisma.user.findFirst({
+      where: { email },
+    });
+
+    return res.json({
+      ok: true,
+      msg: `profile user finded: ${user.name}`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Server error",
+    });
+  }
+};
+
 export const userController = {
   register,
   login,
+  profile,
 };

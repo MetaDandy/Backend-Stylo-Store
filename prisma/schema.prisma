@@ -34,28 +34,34 @@ model Category{
 
 model Role{
   id Int @unique @default(autoincrement())
-  name String @unique
+  name String @unique @db.VarChar(20)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  deletedAt DateTime?
   assignedRole AssignedRole[]
+
+  @@index([name])
 }
 
 model User{
   id Int @unique @default(autoincrement())
-  name String @unique
-  email String @unique
-  password String
-  phone String
+  name String @db.VarChar(50)
+  email String @unique @db.VarChar(75)
+  password String @db.VarChar(255)
+  phone String @db.VarChar(15)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  deletedAt DateTime?
   assignedRole AssignedRole[]
+
+  @@index([email])
 }
 
 model AssignedRole{
   id Int @unique @default(autoincrement())
-  name String @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  deletedAt DateTime?
   role Role @relation(fields: [roleId],references: [id])
   roleId Int
   user User @relation(fields: [userId],references: [id])
