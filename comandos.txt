@@ -1,0 +1,16 @@
+npm init -y
+npm i express morgan cors
+npm i nodemon -D
+npm install prisma -D
+npx prisma init
+npx prisma migrate dev
+
+
+en package.json
+"type": "module",
+
+npm run dev
+
+npm i dotenv 
+npm i bcryptjs
+npm i jsonwebtoken
