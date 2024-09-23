@@ -1,16 +1,23 @@
 import { Router } from "express";
-import { prisma } from "../db.js";
+import { ProductController } from "../controllers/product.controller.js";
+import { upload, verifyToken } from "../middlewares/index.js";
+
 const router = Router();
-
-router.get("/product", async (req, res) => {
-  const products = await prisma.product.findMany();
-  res.json(products);
-});
-
-router.post("/product", async (req, res) => {
-  const newProduct = await prisma.product.create({ data: req.body });
-
-  res.json(newProduct);
-});
+//6 34 03
+router.post(
+  "/create",
+  upload.fields([
+    { name: "image1", maxCount: 1 },
+    { name: "image2", maxCount: 1 },
+    { name: "image3", maxCount: 1 },
+    { name: "image4", maxCount: 1 },
+  ]),
+  verifyToken,
+  ProductController.createProduct
+);
+router.put("/update", verifyToken, ProductController.updateProduct);
+router.patch("/delete", verifyToken, ProductController.deleteProduct);
+router.get("/view", verifyToken, ProductController.viewProduct);
+router.get("/view/:id", verifyToken, ProductController.viewOneProduct);
 
 export default router;

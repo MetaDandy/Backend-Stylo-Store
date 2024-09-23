@@ -16,3 +16,4 @@ npm run dev
 npm i dotenv 
 npm i bcryptjs
 npm i jsonwebtoken
+npm i multer razorpay stripe validator cloudinary

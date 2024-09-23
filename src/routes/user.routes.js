@@ -4,8 +4,13 @@ import { verifyToken } from "../middlewares/index.js";
 
 const router = Router();
 
-router.post("/create", userController.register);
+router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.get("/profile", verifyToken, userController.profile);
+router.put("/update", verifyToken, userController.updateUser);
+router.patch("/delete", verifyToken, userController.deleteUser);
+router.get("/view", verifyToken, userController.viewUser);
+router.get("/view/:id", verifyToken, userController.viewOneUser);
+router.post("/create", verifyToken, userController.register);
 
 export default router;

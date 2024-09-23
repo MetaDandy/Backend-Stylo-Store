@@ -1,16 +1,44 @@
 import { prisma } from "../db.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import validator from "validator";
+
+const createToken = (email, role, name) => {
+  const token = jwt.sign(
+    {
+      email,
+      name,
+      role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "5h",
+    }
+  );
+  return token;
+};
 
 const register = async (req, res) => {
   try {
     console.log(req.body);
     const { name, email, password, phone, roleId } = req.body;
 
-    if (!name || !email || !password || !phone)
+    if (!name || !email || !password || !phone || !roleId)
       return res.status(400).json({
-        ok: false,
-        msg: "Missing required fields: email, password, name, phone",
+        success: false,
+        msg: "Missing required fields: email, password, name, phone, roleId",
+      });
+
+    if (!validator.isEmail(email))
+      return res.status(400).json({
+        success: false,
+        msg: "Please enter a valid email",
+      });
+
+    if (password.lenght < 8)
+      return res.status(400).json({
+        success: false,
+        msg: "Please enter a strong Password",
       });
 
     const existingUser = await prisma.user.findUnique({
@@ -19,8 +47,18 @@ const register = async (req, res) => {
 
     if (existingUser)
       return res.status(409).json({
-        ok: false,
+        success: false,
         msg: "Email already exists",
+      });
+
+    const roleExists = await prisma.role.findUnique({
+      where: { id: roleId },
+    });
+
+    if (!roleExists)
+      return res.status(400).json({
+        success: false,
+        msg: "Invalid roleId",
       });
 
     const salt = await bcryptjs.genSalt(10);
@@ -30,36 +68,22 @@ const register = async (req, res) => {
       data: {
         name,
         email,
-        password: hashedPassword,
         phone: phone.toString(),
       },
     });
 
     const newRoleAssigment = await prisma.assignedRole.create({
       data: {
-        role: { id: roleId },
-        user: { id: newUser.id },
+        password: hashedPassword,
+        role: { connect: { id: roleId } }, // Usar connect en lugar de crear un nuevo objeto
+        user: { connect: { id: newUser.id } },
       },
     });
 
-    const role = await prisma.role.findFirst({
-      where: { id: roleId },
-    });
-
-    const token = jwt.sign(
-      {
-        email: newUser.email,
-        name: newUser.name,
-        role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "5h",
-      }
-    );
+    const token = createToken(newUser.email, roleExists.name, newUser.name);
 
     return res.status(201).json({
-      ok: true,
+      success: true,
       msg: "User created sucsessfully",
       newUser,
       token,
@@ -67,7 +91,7 @@ const register = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      ok: false,
+      success: false,
       msg: "Server error",
     });
   }
@@ -80,7 +104,7 @@ const login = async (req, res) => {
 
     if (!email || !password)
       return res.status(400).json({
-        ok: false,
+        success: false,
         msg: "Missing required fields: email, password",
       });
 
@@ -97,33 +121,29 @@ const login = async (req, res) => {
 
     if (!user) return res.status(404).json({ error: "user not found" });
 
-    const isMatch = await bcryptjs.compare(password, user.password);
+    let isMatch = false;
+    let userRole = null;
+    for (const assigned of user.assignedRole) {
+      isMatch = await bcryptjs.compare(password, assigned.password);
+      if (isMatch) {
+        userRole = assigned.role.name;
+        break;
+      }
+    }
+
     if (!isMatch) return res.status(401).json({ error: "Invalid Credentials" });
 
-    const userRole =
-      user.assignedRole.length > 0 ? user.assignedRole[0].role.name : null;
-
-    const token = jwt.sign(
-      {
-        email: user.email,
-        name: user.name,
-        role: userRole,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "5h",
-      }
-    );
+    const token = createToken(user.email, userRole, user.name);
 
     return res.status(201).json({
-      ok: true,
+      success: true,
       msg: `User ${user.name} authenticated sucsessfully`,
       token,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      ok: false,
+      success: false,
       msg: "Server error",
     });
   }
@@ -140,18 +160,53 @@ const profile = async (req, res) => {
     return res.json({
       ok: true,
       msg: `profile user finded: ${user.name}`,
+      data: user,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      ok: false,
+      success: false,
       msg: "Server error",
     });
   }
+};
+
+// function for update a user
+const updateUser = async (req, res) => {
+  return res.status(500).json({
+    success: false,
+    msg: "Function not implemented",
+  });
+};
+
+// function for delete a user
+const deleteUser = async (req, res) => {
+  return res.status(500).json({
+    success: false,
+    msg: "Function not implemented",
+  });
+};
+// function for view all users
+const viewUser = async (req, res) => {
+  return res.status(500).json({
+    success: false,
+    msg: "Function not implemented",
+  });
+};
+// function for view one user
+const viewOneUser = async (req, res) => {
+  return res.status(500).json({
+    success: false,
+    msg: "Function not implemented",
+  });
 };
 
 export const userController = {
   register,
   login,
   profile,
+  updateUser,
+  deleteUser,
+  viewOneUser,
+  viewUser,
 };
