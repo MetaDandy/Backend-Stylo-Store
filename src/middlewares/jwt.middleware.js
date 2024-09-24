@@ -9,19 +9,28 @@ export const verifyToken = (req, res, next) => {
     });
   }
 
-  token = token.split(" ")[1];
+  // Verifica que el token tenga el formato correcto (Bearer <token>)
+  if (token.startsWith("Bearer ")) {
+    token = token.split(" ")[1];
+  } else {
+    return res.status(400).json({
+      error: "Token format is invalid",
+    });
+  }
 
   try {
     const { email, role } = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log("verficando el email: ", email);
-    req.email = email; //inyecta todo
+    // Inyecta la información del token en el objeto req
+    req.email = email;
     req.role = role;
     next();
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      error: "Invalid token",
+    console.error("Error al verificar el token:", error);
+
+    // En caso de token inválido o expirado
+    return res.status(403).json({
+      error: "Invalid or expired token",
     });
   }
 };

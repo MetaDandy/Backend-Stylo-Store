@@ -3,14 +3,18 @@ import bcryptjs from "bcryptjs";
 
 async function main() {
   const roles = await prisma.role.createMany({
-    data: [{ name: "Admin" }, { name: "Cliente" }, { name: "Repartidor" }],
+    data: [
+      { name: process.env.ADMIN_ROLE },
+      { name: "Cliente" },
+      { name: "Repartidor" },
+    ],
   });
   console.log(roles);
 
   const newUser = await prisma.user.create({
     data: {
       name: "Admin",
-      email: "admin@gmail.com",
+      email: process.env.ADMIN_EMAIL,
       phone: "456781",
     },
   });
@@ -18,7 +22,7 @@ async function main() {
   console.log(newUser);
 
   const salt = await bcryptjs.genSalt(10);
-  const hashedPassword = await bcryptjs.hash("admin", salt);
+  const hashedPassword = await bcryptjs.hash(process.env.ADMIN_PASSWORD, salt);
 
   const assignedRole = await prisma.assignedRole.create({
     data: {
