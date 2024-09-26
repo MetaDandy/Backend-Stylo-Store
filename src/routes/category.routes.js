@@ -1,9 +1,13 @@
 import { Router } from "express";
+import { CategoryController } from "../controllers/category.controller.js";
+import { adminAuth } from "../middlewares/index.js";
 
 const router = Router();
 
-router.get("/category", (req, res) => {
-  res.send("category");
-});
+router.post("/create", adminAuth, CategoryController.createCategory);
+router.put("/update", adminAuth, CategoryController.updateCategory);
+router.patch("/delete", adminAuth, CategoryController.deleteCategory);
+router.get("/view", CategoryController.viewCategory);
+router.get("/view/:id", CategoryController.viewOneCategory);
 
 export default router;

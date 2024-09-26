@@ -5,6 +5,7 @@ import { responses } from "../middlewares/responses.middleware.js";
 // function for update a Product
 const createProduct = async (req, res) => {
   try {
+    console.log(req.body);
     const {
       name,
       price,
@@ -13,28 +14,21 @@ const createProduct = async (req, res) => {
       categoryId,
       seasonId,
       brandId,
-      productSize,
+      size,
     } = req.body;
 
-    if (
-      !name ||
-      !price ||
-      !description ||
-      !bestSeller ||
-      !categoryId ||
-      !seasonId ||
-      !brandId ||
-      !productSize
-    )
-      return res.status(400).json({
-        success: false,
-        msg: "Missing required fields: price, description, name, bestSeller, categoryId, seasonId, brandId, productSize",
-      });
-
-    console.log(typeof price);
-
+    if (!name) return responses.res400(res, "name");
+    if (!price) return responses.res400(res, "price");
+    if (!description) return responses.res400(res, "description");
+    if (!bestSeller) return responses.res400(res, "bestSeller");
+    if (!categoryId) return responses.res400(res, "categoryId");
+    if (!seasonId) return responses.res400(res, "seasonId");
+    if (!brandId) return responses.res400(res, "brandId");
     let pSize;
-    if (typeof productSize === "string") pSize = JSON.parse(productSize);
+    if (typeof size === "string") pSize = JSON.parse(size);
+    if (pSize.length === 0) return responses.res400(res, "size");
+
+    console.log(bestSeller, typeof bestSeller);
 
     const image1 = req.files.image1 && req.files.image1[0];
     const image2 = req.files.image2 && req.files.image2[0];
@@ -62,7 +56,7 @@ const createProduct = async (req, res) => {
         seasonId: Number(seasonId),
         categoryId: Number(categoryId),
         brandId: Number(brandId),
-        bestSeller: Boolean(bestSeller),
+        bestSeller: bestSeller === "false" ? false : true,
         productSize: {
           create: pSize.map((sizeId) => ({
             size: { connect: { id: sizeId } },
@@ -99,16 +93,16 @@ const deleteProduct = async (req, res) => {
       },
     });
 
-    if (!product) responses.res404(res, "Producto");
+    if (!product) return responses.res404(res, "Producto");
 
     await prisma.product.update({
       where: { id: id },
       data: { deletedAt: new Date() },
     });
 
-    return responses.res205(res, product.name);
+    return responses.res206(res, product.name);
   } catch (error) {
-    responses.res500(res, error);
+    return responses.res500(res, error);
   }
 };
 
@@ -153,6 +147,23 @@ const viewOneProduct = async (req, res) => {
       where: {
         id: id,
         deletedAt: null,
+      },
+      include: {
+        category: {
+          select: { name: true }, // Obtener solo el nombre de la categoría
+        },
+        brand: {
+          select: { name: true }, // Obtener solo el nombre de la marca
+        },
+        season: {
+          select: { name: true }, // Obtener solo el nombre de la temporada
+        },
+        productSize: {
+          select: { sizeId: true },
+        },
+        photo: {
+          select: { path: true }, // Obtener la URL de la foto
+        },
       },
     });
 

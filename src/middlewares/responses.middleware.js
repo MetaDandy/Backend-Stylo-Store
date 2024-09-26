@@ -52,8 +52,8 @@ const res404 = (res, name) => {
   });
 };
 
-const res205 = (res, name, type = "eliminated") => {
-  return res.status(205).json({
+const res206 = (res, name, type = "eliminated") => {
+  return res.status(206).json({
     success: true,
     msg: `${name} successfully ${type}`,
   });
@@ -66,11 +66,20 @@ const res505 = (res) => {
   });
 };
 
+const res400 = (res, missingData) => {
+  console.log("falta: ", missingData);
+  return res.status(400).json({
+    success: false,
+    msg: `Missing ${missingData}`,
+  });
+};
+
 export const responses = {
   res200,
   res500,
   res201,
   res404,
-  res205,
+  res206,
   res505,
+  res400,
 };

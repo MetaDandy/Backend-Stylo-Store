@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const adminAuth = async (req, res, next) => {
   try {
-    let token = req.headers.authorization;
+    let token = req.headers.token;
     if (!token)
       return res.status(401).json({
         success: false,

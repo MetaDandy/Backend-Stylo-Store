@@ -1,5 +1,11 @@
 import express from "express";
-import { productRoutes, categoryRoutes, userRoutes } from "./routes/index.js";
+import {
+  productRoutes,
+  categoryRoutes,
+  userRoutes,
+  seasonRoutes,
+  brandRoutes,
+} from "./routes/index.js";
 import morgan from "morgan";
 import "dotenv/config";
 import cors from "cors";
@@ -21,5 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/product", productRoutes);
 app.use("/api", categoryRoutes);
 app.use("/user", userRoutes);
+app.use("/season", seasonRoutes);
+app.use("/brand", brandRoutes);
+app.use("/category", categoryRoutes);
 
 app.listen(PORT, () => console.log("Server on port:", PORT));

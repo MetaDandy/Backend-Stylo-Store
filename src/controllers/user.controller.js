@@ -131,7 +131,11 @@ const login = async (req, res) => {
       }
     }
 
-    if (!isMatch) return res.status(401).json({ error: "Invalid Credentials" });
+    if (!isMatch)
+      return res.status(401).json({
+        success: false,
+        msg: "Invalid Credentials",
+      });
 
     const token = createToken(user.email, userRole, user.name);
 
