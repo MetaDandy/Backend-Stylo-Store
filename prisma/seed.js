@@ -38,6 +38,33 @@ async function main() {
 
   console.log(assignedRole);
 
+  const deliveryUser = await prisma.user.create({
+    data: {
+      name: "Delivery Man",
+      email: "deliveryMan@gmail.com",
+      phone: "456789",
+    },
+  });
+
+  console.log(deliveryUser);
+
+  const saltDM = await bcryptjs.genSalt(10);
+  const hashedDM = await bcryptjs.hash("man Delivery", saltDM);
+
+  const DmRole = await prisma.assignedRole.create({
+    data: {
+      password: hashedDM,
+      role: {
+        connect: { id: 3 },
+      },
+      user: {
+        connect: { id: 2 },
+      },
+    },
+  });
+
+  console.log(DmRole);
+
   const branchs = await prisma.branch.createMany({
     data: [
       {

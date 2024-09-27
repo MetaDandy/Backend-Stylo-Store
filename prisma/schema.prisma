@@ -128,10 +128,10 @@ model Product{
   brand Brand @relation(fields: [brandId], references: [id])
   brandId Int
   inventory Inventory[]
-  order Order[]
   photo Photo[]
   productSize ProductSize[]
   productCatalog ProductCatalog[]
+  cart Cart[]
 }
 
 model Catalog{
@@ -201,17 +201,32 @@ model OrderType{
 
 model Order{
   id Int @id @default(autoincrement())
-  name String @unique @db.VarChar(25)
+  amount Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  deletedAt DateTime?
   orderStatus OrderStatus[]
   delivery Delivery[]
-  product Product @relation(fields: [productId],references: [id])
-  productId Int
-  bill Bill @relation(fields: [billId],references: [id])
-  billId Int
+  cart Cart[]
   user User @relation(fields: [userId],references: [id])
   userId Int
+  payment Payment @relation(fields: [paymentId],references: [id])
+  paymentId Int
+  currency Currency @relation(fields: [currencyId],references: [id])
+  currencyId Int
+}
+
+model Cart{
+  id Int @id @default(autoincrement())
+  quantity Int
+  size String @db.VarChar(5)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  deletedAt DateTime?
+  product Product @relation(fields: [productId],references: [id])
+  productId Int
+  order Order @relation(fields: [orderId],references: [id])
+  orderId Int
 }
 
 model OrderStatus{
@@ -245,7 +260,7 @@ model Currency{
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   deletedAt DateTime?
-  bill Bill[]
+  order Order[]
 }
 
 model Payment{
@@ -255,18 +270,5 @@ model Payment{
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   deletedAt DateTime?
-  bill Bill[]
-}
-
-model Bill{
-  id Int @id @default(autoincrement())
-  totalAmount Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  deletedAt DateTime?
   order Order[]
-  currency Currency @relation(fields: [currencyId],references: [id])
-  currencyId Int
-  payment Payment @relation(fields: [paymentId],references: [id])
-  paymentId Int
 }

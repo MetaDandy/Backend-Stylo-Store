@@ -5,6 +5,9 @@ import {
   userRoutes,
   seasonRoutes,
   brandRoutes,
+  orderRoutes,
+  paymentRoutes,
+  orderTypeRoutes,
 } from "./routes/index.js";
 import morgan from "morgan";
 import "dotenv/config";
@@ -30,5 +33,8 @@ app.use("/user", userRoutes);
 app.use("/season", seasonRoutes);
 app.use("/brand", brandRoutes);
 app.use("/category", categoryRoutes);
+app.use("/order", orderRoutes);
+app.use("/payment", paymentRoutes);
+app.use("/orderType", orderTypeRoutes);
 
 app.listen(PORT, () => console.log("Server on port:", PORT));
