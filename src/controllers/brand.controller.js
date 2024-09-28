@@ -3,26 +3,73 @@ import { responses } from "../middlewares/responses.middleware.js";
 
 // function for update a Brand
 const createBrand = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  try {
+    const { name } = req.body;
+
+    if (!name) return responses.res400(res, "Name");
+
+    const brand = await prisma.brand.create({
+      data: { name: name },
+    });
+
+    return responses.res201(res, brand.name, brand);
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
 
 // function for update a Brand
 const updateBrand = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  const id = Number(req.params.id);
+
+  const { name } = req.body;
+
+  let data = {};
+
+  if (name) data.name = name;
+
+  if (Object.keys(data).length === 0)
+    return responses.res400(res, "data for update");
+
+  try {
+    const brand = await prisma.brand.update({
+      where: { id: id },
+      data: data,
+    });
+
+    return responses.res206(res, brand.name, "updated");
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
 
 // function for delete a Brand
 const deleteBrand = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  try {
+    const id = Number(req.params.id);
+
+    const brand = await prisma.brand.findFirst({
+      where: {
+        deletedAt: null,
+        id: id,
+      },
+    });
+
+    console.log(brand);
+
+    if (!brand) return responses.res404(res, "Brand");
+
+    await prisma.brand.update({
+      where: { id: id },
+      data: { deletedAt: new Date() },
+    });
+
+    console.log(brand);
+
+    return responses.res206(res, brand.name);
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
 
 // function for view all Brands
@@ -40,10 +87,17 @@ const viewBrand = async (req, res) => {
 
 // function for view one Brand
 const viewOneBrand = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  try {
+    const id = Number(req.params.id);
+
+    const brand = await prisma.brand.findFirst({
+      where: { deletedAt: null, id: id },
+    });
+
+    return responses.res200(res, brand.name, brand);
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
 
 export const BrandController = {

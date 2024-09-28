@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/create", adminAuth, BrandController.createBrand);
 router.put("/update", adminAuth, BrandController.updateBrand);
-router.patch("/delete", adminAuth, BrandController.deleteBrand);
+router.patch("/delete/:id", adminAuth, BrandController.deleteBrand);
 router.get("/view", BrandController.viewBrand);
 router.get("/view/:id", BrandController.viewOneBrand);
 

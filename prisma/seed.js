@@ -4,9 +4,19 @@ import bcryptjs from "bcryptjs";
 async function main() {
   const roles = await prisma.role.createMany({
     data: [
-      { name: process.env.ADMIN_ROLE },
-      { name: "Cliente" },
-      { name: "Repartidor" },
+      {
+        name: process.env.ADMIN_ROLE,
+        description: "Superusuario encargado de administar las sucursales.",
+      },
+      {
+        name: "Cliente",
+        description:
+          "Cliente de la tienda que puede hacer pedidos desde su carrito.",
+      },
+      {
+        name: "Repartidor",
+        description: "Repartidores oficiales de la tienda.",
+      },
     ],
   });
   console.log(roles);
@@ -93,9 +103,12 @@ async function main() {
 
   const typeCategory = await prisma.typeCategory.createMany({
     data: [
-      { name: "Ropa" },
-      { name: "Biyuteria y accesorios" },
-      { name: "Zapatos" },
+      { name: "Ropa", description: "Diversos tipos de ropa" },
+      {
+        name: "Biyuteria y accesorios",
+        description: "Diversos tipos de biyuteria y accesorios",
+      },
+      { name: "Zapatos", description: "Diversos tipos de zapatos" },
     ],
   });
 

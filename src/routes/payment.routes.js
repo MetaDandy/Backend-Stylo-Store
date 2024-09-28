@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/create", adminAuth, PaymentController.createPayment);
 router.put("/update", adminAuth, PaymentController.updatePayment);
-router.patch("/delete", adminAuth, PaymentController.deletePayment);
+router.patch("/delete/:id", adminAuth, PaymentController.deletePayment);
 router.get("/view", PaymentController.viewPayment);
 router.get("/view/:id", PaymentController.viewOnePayment);
 

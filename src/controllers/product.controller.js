@@ -2,7 +2,7 @@ import { prisma } from "../db.js";
 import { v2 as cloudinary } from "cloudinary";
 import { responses } from "../middlewares/responses.middleware.js";
 
-// function for update a Product
+// function for create a Product
 const createProduct = async (req, res) => {
   try {
     console.log(req.body);

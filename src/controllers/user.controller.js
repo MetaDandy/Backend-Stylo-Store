@@ -2,6 +2,7 @@ import { prisma } from "../db.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import validator from "validator";
+import { responses } from "../middlewares/responses.middleware.js";
 
 const createToken = (email, role, name) => {
   const token = jwt.sign(
@@ -20,14 +21,13 @@ const createToken = (email, role, name) => {
 
 const register = async (req, res) => {
   try {
-    console.log(req.body);
     const { name, email, password, phone, roleId } = req.body;
 
-    if (!name || !email || !password || !phone || !roleId)
-      return res.status(400).json({
-        success: false,
-        msg: "Missing required fields: email, password, name, phone, roleId",
-      });
+    if (!name) return responses.res400(res, "name");
+    if (!email) return responses.res400(res, "email");
+    if (!password) return responses.res400(res, "password");
+    if (!phone) return responses.res400(res, "phone");
+    if (!roleId) return responses.res400(res, "roleId");
 
     if (!validator.isEmail(email))
       return res.status(400).json({
@@ -190,13 +190,31 @@ const deleteUser = async (req, res) => {
     msg: "Function not implemented",
   });
 };
+
 // function for view all users
 const viewUser = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  try {
+    const user = await prisma.user.findMany({
+      where: { deletedAt: null },
+      include: {
+        assignedRole: {
+          select: {
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return responses.res200(res, "users", user);
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
+
 // function for view one user
 const viewOneUser = async (req, res) => {
   return res.status(500).json({

@@ -200,8 +200,6 @@ CREATE TABLE "OrderType" (
 CREATE TABLE "Order" (
     "id" SERIAL NOT NULL,
     "amount" INTEGER NOT NULL,
-    "quantity" INTEGER NOT NULL,
-    "confirmation" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),

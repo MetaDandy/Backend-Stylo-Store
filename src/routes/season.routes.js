@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/create", adminAuth, SeasonController.createSeason);
 router.put("/update", adminAuth, SeasonController.updateSeason);
-router.patch("/delete", adminAuth, SeasonController.deleteSeason);
+router.patch("/delete/:id", adminAuth, SeasonController.deleteSeason);
 router.get("/view", SeasonController.viewSeason);
 router.get("/view/:id", SeasonController.viewOneSeason);
 

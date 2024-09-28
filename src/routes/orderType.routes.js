@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/create", adminAuth, orderTypeController.createorderType);
 router.put("/update", adminAuth, orderTypeController.updateorderType);
-router.patch("/delete", adminAuth, orderTypeController.deleteorderType);
+router.patch("/delete/:id", adminAuth, orderTypeController.deleteorderType);
 router.get("/view", orderTypeController.vieworderType);
 router.get("/view/:id", orderTypeController.viewOneorderType);
 
