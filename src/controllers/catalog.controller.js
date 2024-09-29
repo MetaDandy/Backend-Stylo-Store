@@ -38,10 +38,17 @@ const deleteCatalog = async (req, res) => {
     if (!id) return responses.res400(res, "catalog id");
 
     const catalog = await prisma.catalog.findFirst({
-      where: { id: Number(id) },
+      where: { id: Number(id), deletedAt: null },
     });
 
     if (!catalog) return responses.res404(res, "catalog");
+
+    await prisma.catalog.update({
+      where: { id: Number(id), deletedAt: null },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
 
     return responses.res206(res, catalog.name);
   } catch (error) {

@@ -258,7 +258,7 @@ model Delivery{
 
 model Currency{
   id Int @id @default(autoincrement())
-  name String @db.VarChar(20)
+  name String @db.VarChar(20) @unique
   description String @db.VarChar(75) @default("No description")
   acronym String @db.VarChar(10) @default("N/A")
   createdAt DateTime @default(now())
@@ -269,7 +269,7 @@ model Currency{
 
 model Payment{
   id Int @id @default(autoincrement())
-  name String @db.VarChar(25)
+  name String @db.VarChar(25) @unique
   description String @db.VarChar(50)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())

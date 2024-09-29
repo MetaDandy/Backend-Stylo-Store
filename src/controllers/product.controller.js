@@ -155,7 +155,12 @@ const viewOneProduct = async (req, res) => {
       },
       include: {
         category: {
-          select: { name: true }, // Obtener solo el nombre de la categoría
+          select: {
+            name: true,
+            typeCategory: {
+              select: { name: true },
+            },
+          },
         },
         brand: {
           select: { name: true }, // Obtener solo el nombre de la marca
