@@ -10,6 +10,10 @@ import {
   orderTypeRoutes,
   categoryTypeRoutes,
   roleRoutes,
+  currencyRoutes,
+  branchRoutes,
+  sizeRoutes,
+  catalogRoutes,
 } from "./routes/index.js";
 import morgan from "morgan";
 import "dotenv/config";
@@ -40,5 +44,9 @@ app.use("/payment", paymentRoutes);
 app.use("/orderType", orderTypeRoutes);
 app.use("/categoryType", categoryTypeRoutes);
 app.use("/role", roleRoutes);
+app.use("/currency", currencyRoutes);
+app.use("/branch", branchRoutes);
+app.use("/size", sizeRoutes);
+app.use("/catalog", catalogRoutes);
 
 app.listen(PORT, () => console.log("Server on port:", PORT));

@@ -9,6 +9,10 @@ import orderRoutes from "./order.routes.js";
 import paymentRoutes from "./payment.routes.js";
 import orderTypeRoutes from "./orderType.routes.js";
 import categoryTypeRoutes from "./typeCategory.routes.js";
+import currencyRoutes from "./currency.routes.js";
+import branchRoutes from "./branch.routes.js";
+import sizeRoutes from "./size.routes.js";
+import catalogRoutes from "./catalog.routes.js";
 
 export {
   productRoutes,
@@ -21,4 +25,8 @@ export {
   paymentRoutes,
   orderTypeRoutes,
   categoryTypeRoutes,
+  currencyRoutes,
+  branchRoutes,
+  sizeRoutes,
+  catalogRoutes,
 };

@@ -259,6 +259,8 @@ model Delivery{
 model Currency{
   id Int @id @default(autoincrement())
   name String @db.VarChar(20)
+  description String @db.VarChar(75) @default("No description")
+  acronym String @db.VarChar(10) @default("N/A")
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   deletedAt DateTime?

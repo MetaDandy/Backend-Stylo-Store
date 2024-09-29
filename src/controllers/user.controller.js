@@ -52,7 +52,7 @@ const register = async (req, res) => {
       });
 
     const roleExists = await prisma.role.findUnique({
-      where: { id: roleId },
+      where: { id: Number(roleId) },
     });
 
     if (!roleExists)
@@ -75,7 +75,7 @@ const register = async (req, res) => {
     const newRoleAssigment = await prisma.assignedRole.create({
       data: {
         password: hashedPassword,
-        role: { connect: { id: roleId } }, // Usar connect en lugar de crear un nuevo objeto
+        role: { connect: { id: Number(roleId) } }, // Usar connect en lugar de crear un nuevo objeto
         user: { connect: { id: newUser.id } },
       },
     });
@@ -185,10 +185,24 @@ const updateUser = async (req, res) => {
 
 // function for delete a user
 const deleteUser = async (req, res) => {
-  return res.status(500).json({
-    success: false,
-    msg: "Function not implemented",
-  });
+  try {
+    const { id } = req.params;
+
+    const user = await prisma.user.findFirst({
+      where: { deletedAt: null, id: Number(id) },
+    });
+
+    if (!user) return responses.res404(res, "user");
+
+    await prisma.user.update({
+      where: { id: Number(id) },
+      data: { deletedAt: new Date() },
+    });
+
+    return responses.res206(res, user.name);
+  } catch (error) {
+    return responses.res500(res, error);
+  }
 };
 
 // function for view all users

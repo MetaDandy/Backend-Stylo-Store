@@ -115,7 +115,12 @@ const viewProduct = async (req, res) => {
       },
       include: {
         category: {
-          select: { name: true }, // Obtener solo el nombre de la categoría
+          select: {
+            name: true,
+            typeCategory: {
+              select: { name: true },
+            },
+          },
         },
         brand: {
           select: { name: true }, // Obtener solo el nombre de la marca
@@ -127,7 +132,7 @@ const viewProduct = async (req, res) => {
           select: { sizeId: true },
         },
         photo: {
-          select: { path: true }, // Obtener la URL de la foto
+          select: { path: true },
         },
       },
     });
