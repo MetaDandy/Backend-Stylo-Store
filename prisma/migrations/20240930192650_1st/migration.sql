@@ -2,6 +2,7 @@
 CREATE TABLE "Role" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(20) NOT NULL,
+    "description" VARCHAR(100) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -76,6 +77,7 @@ CREATE TABLE "Category" (
 CREATE TABLE "TypeCategory" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(35) NOT NULL,
+    "description" VARCHAR(75) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -255,6 +257,8 @@ CREATE TABLE "Delivery" (
 CREATE TABLE "Currency" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(20) NOT NULL,
+    "description" VARCHAR(75) NOT NULL DEFAULT 'No description',
+    "acronym" VARCHAR(10) NOT NULL DEFAULT 'N/A',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -312,6 +316,12 @@ CREATE UNIQUE INDEX "Catalog_name_key" ON "Catalog"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "OrderType_name_key" ON "OrderType"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Currency_name_key" ON "Currency"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Payment_name_key" ON "Payment"("name");
 
 -- AddForeignKey
 ALTER TABLE "AssignedRole" ADD CONSTRAINT "AssignedRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
