@@ -28,7 +28,13 @@ connectCloudinary();
 app.use(morgan("dev"));
 
 //middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, // Permite solicitudes solo desde este dominio
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Permitir los métodos HTTP que tu aplicación necesita
+    allowedHeaders: ["Content-Type", "Authorization"], // Headers que permites en la solicitud
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
